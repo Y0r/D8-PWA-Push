@@ -12,41 +12,42 @@
 
       if (!('serviceWorker' in navigator)) {
         // Service Worker isn't supported on this browser, disable or hide UI.
-        console.debug('service worker not supported');
+        console.log('[PUSH_MODULE] service worker not supported');
         return;
       }
 
       if (!('PushManager' in window)) {
         // Push isn't supported on this browser, disable or hide UI.
-        console.debug('PushManager not supported');
+        console.log('[PUSH_MODULE] PushManager not supported');
         return;
       }
 
       // Requesting notification permission
       if (!('Notification' in window)) {
         // Notification isn't supported on this browser, disable or hide UI.
-        console.debug('Notification not supported');
+        console.log('[PUSH_MODULE] Notification not supported');
         return;
       }
       else {
-        console.debug('Notification is supported');
+        console.log('[PUSH_MODULE] Notification is supported');
       }
 
       if (Notification.permission === 'denied') {
-        console.debug('Notification permission denied');
+        console.log('[PUSH_MODULE] Notification permission denied');
         return;
       }
 
 
       // register service worker
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('serviceworker-advanced_pwa_js', {scope: '/'})
+        //We dont need new SW, have one in main module
+        /*navigator.serviceWorker.register('serviceworker-advanced_pwa_js', {scope: '/'})
           .then(function (registration) {
             // console.log('Registration successful, scope is:', registration.scope);
           })
           .catch(function (error) {
-            // console.log('Service worker registration failed, error:', error);
-          });
+            console.log('[PUSH_MODULE] Service worker registration failed, error:', error);
+          });*/
 
         // Then later, request a one-off sync:
         navigator.serviceWorker.ready.then(function (registration) {
@@ -56,12 +57,12 @@
 
       window.addEventListener('beforeinstallprompt', function (e) {
         e.userChoice.then(function (choiceResult) {
-          // console.log(choiceResult.outcome);
+          console.log("[PUSH_MODULE]" + choiceResult.outcome);
           if (choiceResult.outcome === 'dismissed') {
-            // console.log('User cancelled homescreen install');
+            console.log('[PUSH_MODULE] User cancelled homescreen install');
           }
           else {
-            // console.log('User added to homescreen');
+            console.log('[PUSH_MODULE] User added to homescreen');
           }
         });
       });
@@ -100,23 +101,23 @@
         navigator.serviceWorker.ready.then(function (registration) {
           registration.pushManager.getSubscription().then(function (sub) {
             if (!sub) {
-              // console.log('Not subscribed to push service!');
+              console.log('[PUSH_MODULE] Not subscribed to push service!');
               subscribeUser();
               return;
             }
             else {
               // We have a subscription, update the database
-              // console.log('Subscription object: ', JSON.stringify(sub));
+              console.log('[PUSH_MODULE] Subscription object: ', JSON.stringify(sub));
             }
           })
             .catch(function (e) {
-              //  console.log('Error subscribing: ', e);
+              console.log('[PUSH_MODULE] Error subscribing: ', e);
             });
         });
       }
 
       function subscribeUser() {
-        // console.log('subscribeUser');
+        console.log('[PUSH_MODULE] subscribeUser');
         const applicationServerKey = urlB64ToUint8Array(applicationServerPublicKey);
 
         navigator.serviceWorker.ready.then(function (registration) {
@@ -124,14 +125,14 @@
             userVisibleOnly: true,
             applicationServerKey: applicationServerKey
           }).then(function (sub) {
-            // console.log('Endpoint URL: ', JSON.stringify(sub));
+            console.log('[PUSH_MODULE] Endpoint URL: ', JSON.stringify(sub));
             return subscribeToBackEnd(sub);
           }).catch(function (e) {
             if (Notification.permission === 'denied') {
-              // console.warn('Permission for notifications was denied');
+              onsole.warn('[PUSH_MODULE] Permission for notifications was denied');
             }
             else {
-              // console.error('Unable to subscribe to push', e);
+              console.error('[PUSH_MODULE] Unable to subscribe to push', e);
             }
           });
         });
@@ -140,8 +141,8 @@
       function subscribeToBackEnd(subscription) {
         const key = subscription.getKey('p256dh');
         const token = subscription.getKey('auth');
-        var subcribe_url = baseUrl + 'advanced_pwa/subscribe';
-        // console.log('sendSubscriptionToBackEnd ', subscription);
+        var subcribe_url = baseUrl + 'pwa/subscribe';
+        console.log('sendSubscriptionToBackEnd ', subscription);
 
         return fetch(subcribe_url, {
           method: 'POST',
@@ -153,11 +154,11 @@
         }).then(function (resp) {
           // Transform the data into json.
           resp = resp.json();
-          //  console.log('subscribeToBackEnd ', resp);
+          console.log('[PUSH_MODULE] subscribeToBackEnd ', resp);
         }).then(function (data) {
-          // console.log('subscribeToBackEnd ', data);
+          console.log('[PUSH_MODULE] subscribeToBackEnd ', data);
         }).catch(function (e) {
-          // console.log('Unable to send subscription to backend:', e);
+          console.log('[PUSH_MODULE] Unable to send subscription to backend:', e);
         });
       }
 
@@ -208,10 +209,13 @@
       */
 
 
+
+      //I DONT WANT SHOW CUSTOM POPUP, ONLY STANDART
+
       // Notification popup will appear when user allowed notification permission.
       var confirmationDialog = Drupal.dialog('<div class="advanced_pwa_message_div" style="display: none !important;">This site may send you push notifications.</div>', {
         title: Drupal.t('Allow website notifications?'),
-        dialogClass: 'advanced_pwa-model-popup',
+        dialogClass: 'pwa-model-popup',
         resizable: false,
         buttons: [
           {
@@ -240,23 +244,29 @@
           // $(event.target).remove();
         }
       });
+
         // Checking if the user is subcribed for notification, if not popup will appear.
       navigator.serviceWorker.ready.then(serviceWorkerRegistration => serviceWorkerRegistration.pushManager.getSubscription())
         .then(subscription => {
           if (status_all === 1) {
             if (!subscription) {
-              // We aren't subscribed to push, so enable subscription.
+
+              //TODO: Dont add user token, if user skip standart popup;
+              //SHOW STANDART WINDOW!!
+              //updatePushSubscription();
+
+              //custom modal window
               confirmationDialog.showModal();
               // return;.
             }
           }
           else {
-            // console.log('notification feature disabled from configuration form');
+            console.log('[PUSH_MODULE] notification feature disabled from configuration form');
           }
         })
         .then(subscription => subscription)
         .catch(e => {
-          // console.error('Error when updating the subscription', e);
+          console.error('[PUSH_MODULE] Error when updating the subscription', e);
         });
     }
   };

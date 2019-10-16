@@ -65,7 +65,7 @@ function pwa_push_node_form_submit($form, FormStateInterface $form_state) {
     $url = $url->toString();
     $entry = [
       'title' => "New '$node_type' content is published. Click to view.",
-      'message' => "",
+      'message' => "My Custom message for you, please click!",
       'icon' => $icon_path,
       'url' => $url,
       'content-details' => [

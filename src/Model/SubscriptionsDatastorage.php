@@ -109,13 +109,14 @@ class SubscriptionsDatastorage {
    */
   public static function sendNotificationStart(array $subscriptionData, $notification_data) {
     if (!empty($subscriptionData) && !empty($notification_data)) {
+      drupal_set_message('Notifi_data' . print_r($notification_data, 1));
       foreach ($subscriptionData as $subscription) {
         $subscription_data = unserialize($subscription->subscription_data);
         $subscription_endpoint = $subscription->subscription_endpoint;
         $key = $subscription_data['key'];
         $token = $subscription_data['token'];
-        $public_key = \Drupal::config('pwa_push_subscriptions')->get('public_key');
-        $private_key = \Drupal::config('pwa_push_subscriptions')->get('private_key');
+        $public_key = \Drupal::config('pwa_push.pwa_push')->get('public_key');
+        $private_key = \Drupal::config('pwa_push.pwa_push')->get('private_key');
         
         if (!empty($key) && !empty($token) && !empty($subscription_endpoint)) {
           $host = \Drupal::request()->getHost();

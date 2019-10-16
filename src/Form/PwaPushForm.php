@@ -42,6 +42,7 @@ class PwaPushForm extends ConfigFormBase {
   protected function getEditableConfigNames() {
     return [
       'pwa_push.pwa_push',
+      'pwa_push.settings',
     ];
   }
   
@@ -57,7 +58,21 @@ class PwaPushForm extends ConfigFormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
     $config = $this->config('pwa_push.pwa_push');
+    $pwa_push_config = $this->config('pwa_push.settings');
     $form = parent::buildForm($form, $form_state);
+  
+    $form['push_settings'] = [
+      '#type' => 'details',
+      '#title' => $this->t('Accept push notification'),
+      '#open' => FALSE,
+    ];
+  
+    $form['push_settings']['status_all'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Enable push notifications'),
+      '#default_value' => NULL !== $pwa_push_config->get('status.all') ? $pwa_push_config->get('status.all') : TRUE,
+      '#description' => $this->t('Disabling the push notifications will ensure that no user will be able to receive push notifications'),
+    ];
     
     $form['gcm_key'] = [
       '#type' => 'textfield',
@@ -67,7 +82,6 @@ class PwaPushForm extends ConfigFormBase {
       '#size' => 50,
       '#default_value' => $config->get('gcm_key'),
     ];
-    
     $form['public_key'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Public Key'),
@@ -170,6 +184,10 @@ class PwaPushForm extends ConfigFormBase {
       ->set('public_key', trim($form_state->getValue('public_key')))
       ->set('private_key', trim($form_state->getValue('private_key')))
       ->set('icon_path', $form_state->getValue('icon_path'))
+      ->save();
+  
+    $this->config('pwa_push.settings')
+      ->set('status.all', $form_state->getValue('status_all'))
       ->save();
   }
   
