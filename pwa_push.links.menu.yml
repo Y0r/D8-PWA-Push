@@ -1,0 +1,27 @@
+pwa_push.config:
+  title: Push Notification Configuration
+  description: 'Progressive web app push configuration'
+  parent: pwa.admin_index
+  route_name: pwa_push.config
+  weight: 2
+
+pwa_push.config.subscription:
+  title: Push Notification Content Settings
+  description: 'Push configuration for content'
+  parent: pwa.admin_index
+  route_name: pwa_push.config.subscription
+  weight: 3
+
+pwa_push.config.broadcast:
+  title: Broadcast Push Notification
+  description: 'Push using BroadcastUpdateAPI'
+  parent: pwa.admin_index
+  route_name: pwa_push.config.broadcast
+  weight: 4
+
+pwa_push.subscription_list:
+  title: Push Notification Subscription List
+  description: 'Your site subscribers list'
+  parent: pwa.admin_index
+  route_name: pwa_push.subscription_list
+  weight: 5

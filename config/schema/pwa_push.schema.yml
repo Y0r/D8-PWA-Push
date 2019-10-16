@@ -1,0 +1,9 @@
+pwa_push.pwa_push.subscription:
+  type: config_object
+  label: 'pwa_push settings'
+  mapping:
+    enabled_content_types:
+      type: sequence
+      label: 'Enabled Content types'
+      sequence:
+        type: string

@@ -1,0 +1,13 @@
+langcode: en
+status: true
+dependencies: {  }
+name: push_pwa_icon_180
+label: 'push_pwa Icon (180 x 180)'
+effects:
+   advanced_pwa_icon_180:
+    uuid: push_pwa_icon_180
+    id: image_scale
+    weight: 1
+    data:
+      width: 180
+      height: 180

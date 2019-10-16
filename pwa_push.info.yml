@@ -1,0 +1,4 @@
+name: Progressive Web App Push Notification
+type: module
+description: Push notification for your site
+core: 8.x

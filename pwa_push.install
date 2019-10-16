@@ -1,0 +1,83 @@
+<?php
+
+/**
+ * @file
+ * Contains advanced_pwa.install functionality.
+ */
+
+use Drupal\Core\File\FileSystemInterface;
+use Drupal\image\Entity\ImageStyle;
+
+/**
+ * Implements hook_uninstall().
+ */
+function pwa_push_install() {
+  
+  // Create a directory and ensure it's writable.
+  $directory = file_default_scheme() . '://images/pwaimages';
+  \Drupal::service('file_system')
+    ->prepareDirectory($directory, FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS);
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function pwa_push_uninstall() {
+  // Delete remaining general module variables.
+  $config_factory = Drupal::configFactory();
+  // Delete all of the default settings.
+  $config_factory->getEditable('pwa_push.settings')->delete();
+  // Define all the image styles that need to be removed.
+  $all_image_styles = ImageStyle::loadMultiple();
+  foreach ($all_image_styles as $img) {
+    $name_of_img = $img->getName();
+    if (strpos($name_of_img, 'pwa_push') !== FALSE) {
+      $config_factory->getEditable('image.style.' . $name_of_img)->delete();
+    }
+  }
+  
+  // Remove the VAPID keys on uninstall.
+  \Drupal::state()->delete('pwa_push.vapid_keys');
+  // Delete all subscriptions.
+  \Drupal::service('user.data')->delete('pwa_push');
+  // Delete images stored by pwa.
+  $pathofimagefolder = file_default_scheme() . '://images/pwaimages';
+  \Drupal::service('file_system')->deleteRecursive($pathofimagefolder);
+}
+
+/**
+ * Implements hook_schema().
+ */
+function pwa_push_schema() {
+  $schema['pwa_push_subscriptions'] = [
+    'description' => 'The base table for storing advanced_pwa subscription details',
+    'fields' => [
+      'id' => [
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => "The id for the table that is autoincremental id.",
+      ],
+      'subscription_data' => [
+        'description' => 'Store authorization details and crypto key.',
+        'type' => 'text',
+        'size' => 'normal',
+        'not null' => TRUE,
+      ],
+      'subscription_endpoint' => [
+        'description' => 'Stores browser subscription endpoint.',
+        'type' => 'text',
+        'size' => 'normal',
+        'not null' => TRUE,
+      ],
+      'registered_on' => [
+        'description' => 'Time when an ID is registered.',
+        'type' => 'int',
+        'size' => 'normal',
+        'not null' => TRUE,
+      ],
+    ],
+    'primary key' => ['id'],
+  ];
+  return $schema;
+}

@@ -1,0 +1,55 @@
+pwa_push.config:
+  path: '/admin/config/pwa/push-config'
+  defaults:
+    _form: '\Drupal\pwa_push\Form\PwaPushForm'
+    _title: 'Push Notification Configuration'
+  requirements:
+    _permission: 'administer site configuration'
+  options:
+    _admin_route: TRUE
+
+pwa_push.config.subscription:
+  path: '/admin/config/pwa/subscription-config'
+  defaults:
+    _form: '\Drupal\pwa_push\Form\PwaPushSubscriptionForm'
+    _title: 'Push Notification Content'
+  requirements:
+    _permission: 'administer site configuration'
+  options:
+    _admin_route: TRUE
+
+pwa_push.subscription_list:
+  path: '/admin/config/pwa/subscription-list'
+  defaults:
+    _controller: '\Drupal\pwa_push\Controller\PwaPushController::subscriptionList'
+    _title: 'Push Notification Subscription List'
+  requirements:
+    _permission: 'administer site configuration'
+  options:
+    _admin_route: TRUE
+
+pwa_push.config.broadcast:
+  path: '/admin/config/pwa/broadcast-config'
+  defaults:
+    _form: '\Drupal\pwa_push\Form\PwaPushBroadcastForm'
+    _title: 'Broadcast Push Notification'
+  requirements:
+    _permission: 'administer site configuration'
+  options:
+    _admin_route: TRUE
+
+pwa_push.subscribe:
+  path: '/pwa/subscribe'
+  defaults:
+    _controller: '\Drupal\pwa_push\Controller\PwaPushController::subscribe'
+    _title: 'subscribe'
+  requirements:
+    _permission: 'access content'
+
+pwa_push.unsubscribe:
+  path: '/pwa/unsubscribe'
+  defaults:
+    _controller: '\Drupal\pwa_push\Controller\PwaPushController::unsubscribe'
+    _title: 'unsubscribe'
+  requirements:
+    _permission: 'access content'

@@ -1,0 +1,19 @@
+pwa_push.config:
+  title: 'Push Config'
+  base_route: pwa.config
+  route_name: pwa_push.config
+
+pwa_push.config.subscription:
+  title: 'Push Content Settings'
+  base_route: pwa.config
+  route_name: pwa_push.config.subscription
+
+pwa_push.config.broadcast:
+  title: 'Broadcast Push'
+  base_route: pwa.config
+  route_name: pwa_push.config.broadcast
+
+pwa_push.subscription_list:
+  title: 'Subscription List'
+  base_route: pwa.config
+  route_name: pwa_push.subscription_list

@@ -1,0 +1,91 @@
+<?php
+
+/**
+ * @file
+ * Contains pwa_push.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\pwa_push\Model\SubscriptionsDatastorage;
+use Drupal\Component\Serialization\Json;
+use Drupal\Core\Url;
+
+
+/**
+ * Implements hook_page_attachments().
+ */
+function pwa_push_page_attachments(array &$page) {
+  $public_key = \Drupal::config('pwa_push.pwa_push')->get('public_key');
+  $status_all = \Drupal::config('pwa_push.settings')->get('status.all');
+  $page['#attached']['drupalSettings']['pwa_push']['public_key'] = $public_key;
+  $page['#attached']['drupalSettings']['pwa_push']['status_all'] = $status_all;
+  
+  if (isset($public_key)) {
+    $page['#attached']['library'][] = 'pwa_push/pwa_push';
+  }
+}
+
+/**
+ * Implements hook_form_entity_type_alter().
+ */
+function pwa_push_form_node_form_alter(&$form, FormStateInterface $form_state) {
+  $node = $form_state->getFormObject()->getEntity();
+  $nid = $node->id();
+  if (!($node->load($nid))) {
+    foreach (array_keys($form['actions']) as $action) {
+      if ($action != 'preview' && isset($form['actions'][$action]['#type']) && $form['actions'][$action]['#type'] === 'submit') {
+        $form['actions'][$action]['#submit'][] = 'pwa_push_node_form_submit';
+      }
+    }
+  }
+}
+
+/**
+ * Submit handler.
+ */
+function pwa_push_node_form_submit($form, FormStateInterface $form_state) {
+  $node = $form_state->getFormObject()->getEntity();
+  $config = \Drupal::config('pwa_push.pwa_push.subscription');
+  $publish_notify = $config->get('activate_feature');
+  $nodeIsPublished = $node->isPublished();
+  $enabled_content_types = $config->get('enabled_content_types');
+  $node_type = $form_state->getFormObject()->getEntity()->getType();
+  foreach ($enabled_content_types as $types) {
+    if ($types == $node_type) {
+      $send_notifications = 1;
+    }
+  }
+  if (!empty($nodeIsPublished) && !empty($send_notifications) && !empty($publish_notify)) {
+    $pwa_push_config = \Drupal::config('pwa_push.pwa_push');
+    $icon = $pwa_push_config->get('icon_path');
+    $icon_path = file_create_url($icon);
+    $options = ['absolute' => TRUE];
+    $url = Url::fromRoute('entity.node.canonical', ['node' => $node->id()], $options);
+    $url = $url->toString();
+    $entry = [
+      'title' => "New '$node_type' content is published. Click to view.",
+      'message' => "",
+      'icon' => $icon_path,
+      'url' => $url,
+      'content-details' => [
+        'nodeid' => $node->id(),
+        'nodetype' => $node_type,
+      ],
+    ];
+    $notification_data = Json::encode($entry);
+    $subscriptions = SubscriptionsDatastorage::loadAll();
+    $pwa_push_public_key = $pwa_push_config->get('public_key');
+    $pwa_push_private_key = $pwa_push_config->get('private_key');
+    if (!empty($subscriptions) && !empty($pwa_push_public_key) && !empty($pwa_push_private_key)) {
+      /** @var QueueFactory $queue_factory */
+      $queue_factory = \Drupal::service('queue');
+      /** @var QueueInterface $queue */
+      $queue = $queue_factory->get('cron_send_notification');
+      $item = new \stdClass();
+      $item->subscriptions = $subscriptions;
+      $item->notification_data = $notification_data;
+      $queue->createItem($item);
+    }
+  }
+}
