@@ -1,9 +1,10 @@
 /**
  * Chat messages, emails, document updates, settings changes, photo uploads… anything that you want to reach the server even if user navigates away or closes the tab.
  */
+
 self.addEventListener('push', function (event) {
   'use strict';
-  console.log('[Service Worker][PWA PUSH] Push Received.');
+  //console.log('[Service Worker][PWA PUSH] Push Received.');
   let body;
   if (event.data) {
     body = event.data.text();

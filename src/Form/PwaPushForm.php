@@ -6,6 +6,7 @@ use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Minishlink\WebPush\VAPID;
 use Drupal\Core\Extension\ModuleHandlerInterface;
+use mysql_xdevapi\Exception;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**

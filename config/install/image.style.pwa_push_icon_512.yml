@@ -1,11 +1,11 @@
 langcode: en
 status: true
 dependencies: {  }
-name: push_pwa_icon_512
+name: pwa_push_icon_512
 label: 'push_pwa Icon (512 x 512)'
 effects:
-  advanced_pwa_icon_512:
-    uuid: push_pwa_icon_512
+  pwa_push_icon_512:
+    uuid: pwa_push_icon_512
     id: image_scale
     weight: 1
     data:

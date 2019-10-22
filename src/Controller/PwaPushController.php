@@ -75,6 +75,7 @@ class PwaPushController extends ControllerBase {
       $success = SubscriptionsDatastorage::insert($entry);
       return new JsonResponse([$success]);
     }
+    return NULL;
   }
   
   /**
