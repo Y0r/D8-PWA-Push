@@ -109,7 +109,6 @@ class SubscriptionsDatastorage {
    */
   public static function sendNotificationStart(array $subscriptionData, $notification_data) {
     if (!empty($subscriptionData) && !empty($notification_data)) {
-      drupal_set_message('Notifi_data' . print_r($notification_data, 1));
       foreach ($subscriptionData as $subscription) {
         $subscription_data = unserialize($subscription->subscription_data);
         $subscription_endpoint = $subscription->subscription_endpoint;

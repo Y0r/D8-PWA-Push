@@ -34,7 +34,7 @@ function pwa_push_file_data() {
     $pathToPWA = drupal_get_path('module', 'pwa');
     file_put_contents($pathToPWA . '/js/serviceworker.js', $pushCode, FILE_APPEND);
   }catch (Exception $e) {
-    watchdog('[PWA PUSH]', 'Error while installation. PushCode.js don\'t implement in serviseworker.js' . $e);
+    drupal_set_message('Error while JS installations. Try install manually', 'error');
   }
 }
 
@@ -51,7 +51,6 @@ function pwa_push_uninstall() {
   foreach ($all_image_styles as $img) {
     $name_of_img = $img->getName();
     if (strpos($name_of_img, 'pwa_push') !== FALSE) {
-      watchdog('image styles delete', $name_of_img);
       $config_factory->getEditable('image.style.' . $name_of_img)->delete();
     }
   }
