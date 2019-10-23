@@ -46,6 +46,5 @@ That's all.
 
 
 =========================Troubleshooting==========================
-Check if following requirements are met:
 1) The current module works only with web-push library version 4.0
 2) Web-push library 4.0 needs php version 7.0 or higher
