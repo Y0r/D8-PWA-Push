@@ -9,8 +9,14 @@ use Minishlink\WebPush\Subscription;
  * Class SubscriptionsDatastorage.
  */
 class SubscriptionsDatastorage {
+
+  /**
+   * Name of table, where saved saved subscribers.
+   *
+   * @var \Minishlink\WebPush\Subscription
+   */
   public static $subscriptionTable = 'pwa_push_subscriptions';
-  
+
   /**
    * Save an entry in the database.
    *
@@ -27,7 +33,7 @@ class SubscriptionsDatastorage {
     $return_value = NULL;
     $arguments = [];
     $arguments[':endpoint'] = $entry['subscription_endpoint'];
-    
+
     $subscription_exist = \Drupal::database()->select(self::$subscriptionTable)
       ->fields('pwa_push_subscriptions')
       ->where('subscription_endpoint=:endpoint', $arguments)
@@ -36,20 +42,20 @@ class SubscriptionsDatastorage {
     if ($subscription_exist) {
       return $subscription_exist;
     }
-    
+
     try {
       $return_value = \Drupal::database()->insert('pwa_push_subscriptions')
         ->fields($entry)
         ->execute();
     }
     catch (\Exception $e) {
-      $msg = t('db_insert failed. Message = %message, query= %query',['%message' => $e->getMessage(), '%query' => $e->query_string]);
+      $msg = t('db_insert failed. Message = %message, query= %query', ['%message' => $e->getMessage(), '%query' => $e->query_string]);
       \Drupal::messenger()->addError($msg);
     }
-    
+
     return $return_value;
   }
-  
+
   /**
    * Delete an entry in the database.
    *
@@ -66,7 +72,7 @@ class SubscriptionsDatastorage {
     $return_value = NULL;
     $arguments = [];
     $arguments[':endpoint'] = $entry['subscription_endpoint'];
-    
+
     $subscription_exist = \Drupal::database()->select(self::$subscriptionTable)
       ->fields('pwa_push_subscriptions')
       ->where('subscription_endpoint=:endpoint', $arguments)
@@ -75,7 +81,7 @@ class SubscriptionsDatastorage {
     if (!$subscription_exist) {
       return NULL;
     }
-    
+
     try {
       $return_value = \Drupal::database()->delete('pwa_push_subscriptions')
         ->where('subscription_endpoint=:endpoint', $arguments)
@@ -85,10 +91,10 @@ class SubscriptionsDatastorage {
       \Drupal::messenger()->addMessage(t('db_delete failed. Message = %message, query= %query',
         ['%message' => $e->getMessage(), '%query' => $e->query_string]), 'error');
     }
-    
+
     return $return_value;
   }
-  
+
   /**
    * Load all client subscription details to send notification.
    */
@@ -98,7 +104,7 @@ class SubscriptionsDatastorage {
     $select->fields('pwa_push_subscriptions');
     return $select->execute()->fetchAll();
   }
-  
+
   /**
    * Batch process to start subscription.
    *
@@ -116,7 +122,7 @@ class SubscriptionsDatastorage {
         $token = $subscription_data['token'];
         $public_key = \Drupal::config('pwa_push.pwa_push')->get('public_key');
         $private_key = \Drupal::config('pwa_push.pwa_push')->get('private_key');
-        
+
         if (!empty($key) && !empty($token) && !empty($subscription_endpoint)) {
           $host = \Drupal::request()->getHost();
           $auth = [
@@ -138,16 +144,16 @@ class SubscriptionsDatastorage {
             TRUE
           );
         }
-        
+
       }
     }
   }
-  
+
   /**
    * Batch End process.
    */
   public static function notificationFinished() {
     return TRUE;
   }
-  
+
 }

@@ -5,12 +5,10 @@
  * Contains pwa_push.module.
  */
 
-use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\pwa_push\Model\SubscriptionsDatastorage;
 use Drupal\Component\Serialization\Json;
 use Drupal\Core\Url;
-
 
 /**
  * Implements hook_page_attachments().
@@ -20,7 +18,7 @@ function pwa_push_page_attachments(array &$page) {
   $status_all = \Drupal::config('pwa_push.settings')->get('status.all');
   $page['#attached']['drupalSettings']['pwa_push']['public_key'] = $public_key;
   $page['#attached']['drupalSettings']['pwa_push']['status_all'] = $status_all;
-  
+
   if (isset($public_key)) {
     $page['#attached']['library'][] = 'pwa_push/pwa_push';
   }

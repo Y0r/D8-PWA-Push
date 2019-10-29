@@ -11,14 +11,14 @@ use Drupal\Core\Entity\EntityStorageInterface;
  * Class AdvancedpwaSubscriptionForm.
  */
 class PwaPushSubscriptionForm extends ConfigFormBase {
-  
+
   /**
    * The entity storage.
    *
    * @var \Drupal\Core\Entity\EntityStorageInterface
    */
   protected $entityStorage;
-  
+
   /**
    * Creates a new NodeType instance.
    *
@@ -28,7 +28,7 @@ class PwaPushSubscriptionForm extends ConfigFormBase {
   public function __construct(EntityStorageInterface $entity_storage) {
     $this->entityStorage = $entity_storage;
   }
-  
+
   /**
    * {@inheritdoc}
    */
@@ -37,7 +37,7 @@ class PwaPushSubscriptionForm extends ConfigFormBase {
       $container->get('entity.manager')->getStorage('node_type')
     );
   }
-  
+
   /**
    * {@inheritdoc}
    */
@@ -46,21 +46,21 @@ class PwaPushSubscriptionForm extends ConfigFormBase {
       'pwa_push.pwa_push.subscription',
     ];
   }
-  
+
   /**
    * {@inheritdoc}
    */
   public function getFormId() {
     return 'pwa_push_subscription_form';
   }
-  
+
   /**
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
     $config = $this->config('pwa_push.pwa_push.subscription');
     $form = parent::buildForm($form, $form_state);
-    
+
     $contentTypes = $this->entityStorage->loadMultiple();
     $contentTypesList = [];
     foreach ($contentTypes as $contentType) {
@@ -85,16 +85,17 @@ class PwaPushSubscriptionForm extends ConfigFormBase {
     ];
     return $form;
   }
-  
+
   /**
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     parent::submitForm($form, $form_state);
-    
+
     $this->configFactory->getEditable('pwa_push.pwa_push.subscription')
       ->set('enabled_content_types', $form_state->getValue('enabled_content_types'))
       ->set('activate_feature', $form_state->getValue('activate_feature'))
       ->save();
   }
+
 }

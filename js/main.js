@@ -56,7 +56,6 @@
         });
       });
 
-
       window.addEventListener('appinstalled', (evt) => {
         app.logEvent('advanced_pwa', 'installed');
       });
@@ -150,7 +149,6 @@
           //console.log('[PUSH_MODULE] Unable to send subscription to backend:', e);
         });
       }
-
 
       /*
       function unsubscribeUser() {

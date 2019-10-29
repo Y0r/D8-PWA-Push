@@ -8,8 +8,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Drupal\Core\Database\Connection;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\pwa_push\Model\SubscriptionsDatastorage;
-use Symfony\Component\HttpFoundation\Response;
-use Drupal\image\Entity\ImageStyle;
 use Psr\Log\LoggerInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\State\StateInterface;
@@ -18,23 +16,28 @@ use Drupal\Core\State\StateInterface;
  * Class pwaPushController.
  */
 class PwaPushController extends ControllerBase {
-  
+
+  /**
+   * Database connection.
+   *
+   * @var \Drupal\Core\Database\Connection
+   */
   protected $database;
-  
+
   /**
    * A logger instance.
    *
    * @var \Psr\Log\LoggerInterface
    */
   protected $logger;
-  
+
   /**
    * The state key/value store.
    *
    * @var \Drupal\Core\State\StateInterface
    */
   protected $state;
-  
+
   /**
    * {@inheritdoc}
    */
@@ -46,7 +49,7 @@ class PwaPushController extends ControllerBase {
       $container->get('state')
     );
   }
-  
+
   /**
    * {@inheritdoc}
    */
@@ -56,7 +59,7 @@ class PwaPushController extends ControllerBase {
     $this->fileStorage = $entity_type->getStorage('file');
     $this->state = $state;
   }
-  
+
   /**
    * Subscribe.
    *
@@ -67,7 +70,7 @@ class PwaPushController extends ControllerBase {
     if ($request) {
       $message = 'Subscribe: ' . $request->getContent();
       $this->logger->info($message);
-      
+
       $data = json_decode($request->getContent(), TRUE);
       $entry['subscription_endpoint'] = $data['endpoint'];
       $entry['subscription_data'] = serialize(['key' => $data['key'], 'token' => $data['token']]);
@@ -77,7 +80,7 @@ class PwaPushController extends ControllerBase {
     }
     return NULL;
   }
-  
+
   /**
    * Un-subscribe.
    *
@@ -88,14 +91,14 @@ class PwaPushController extends ControllerBase {
     if ($request) {
       $message = 'Un-subscribe : ' . $request->getContent();
       $this->logger->info($message);
-      
+
       $data = json_decode($request->getContent(), TRUE);
       $entry['subscription_endpoint'] = $data['endpoint'];
       $success = SubscriptionsDatastorage::delete($entry);
       return new JsonResponse([$success]);
     }
   }
-  
+
   /**
    * List of all subscribed users.
    */
@@ -115,7 +118,7 @@ class PwaPushController extends ControllerBase {
     $query->fields(SubscriptionsDatastorage::$subscriptionTable, $getFields);
     $pager = $query->extend('Drupal\Core\Database\Query\PagerSelectExtender');
     $result = $pager->execute();
-    
+
     // Populate the rows.
     $rows = [];
     foreach ($result as $row) {
@@ -142,10 +145,11 @@ class PwaPushController extends ControllerBase {
       '#header' => $header,
       '#rows' => $rows,
     ];
-    
+
     $build['pager'] = [
       '#type' => 'pager',
     ];
     return $build;
   }
+
 }

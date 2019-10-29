@@ -1,17 +1,14 @@
+#Push Notification for PWA
 Модуль PWA Push створений спеціально для Progresive Web Aplication.
 https://www.drupal.org/project/pwa (v. :dev8.x-1.1) 
 
-===================================================================
-*****************************Вимоги********************************
-===================================================================
+##Вимоги
 1) Модуль Progresive Web Aplication
 2) Сайт повинен мати SSL сертифікат (HTTPS з'єднання)
 3) php версії 7.0 та вище
 4) minishlink/web-push library версії 4.0
 
-===================================================================
-******************Встановлення та налаштування*********************
-===================================================================
+##Встановлення та налаштування
 1) Встановіть PWA (https://www.drupal.org/project/pwa)
 2) Увімкніть та налаштуйте, задайте конфігурацію для маніфест файла, 
 та сервіс воркера. Або використовуйте стандартні налаштування модуля.
@@ -44,7 +41,8 @@ https://YourSiteName.com/admin/config/pwa/push-config, та натисніть
 3) Goggle Dev Tools > Aplication > Clear storage та натиснути Clear site data.
 4) Оновляємо сторінку за домогою очистки кеша та жосткого перезавантаження. 
 Для цього (Goggle Dev Tools має бути відкритим), лівою кнопкою миші затискаємо 
-кнопку перезавантаження в браузері та вибираємо "Очистка кеша та жостке перезавантаження".
+кнопку перезавантаження в браузері та вибираємо "Очистка кеша та жостке 
+перезавантаження".
 5) Goggle Dev Tools > Aplication > Service Worker знімаємо чекбокс Offline,
 та завантажуємо сторінку.
 
@@ -52,27 +50,24 @@ https://YourSiteName.com/admin/config/pwa/push-config, та натисніть
 можете додати інші налаштування, наприклад надсилання при створенні нового 
 матеріалу. 
 
-===================================================================
-******************************Деталі*******************************
-===================================================================
-1) Налаштування ключів API - https://YourSiteName.com/admin/config/pwa/push-config
-2) Налаштування сповіщення про створення нових нод - https://YourSiteName.com/admin/config/pwa/subscription-config
-3) Тестування пуш сповіщень - https://YourSiteName.com/admin/config/pwa/broadcast-config
-4) Список підписаних на оновлення людей - https://YourSiteName.com/admin/config/pwa/subscription-list
-5) Надсилання тестових пушів або пушів про створення нод здійснюється під час запуску крона!
-6) Надсилання пушів знаходить у методі sendNotificationStart (pwa/modules/pwa_push/src/Model/SubscriptionsDatastorage.php) 
-7) Формування даних у методі pwa_push_node_form_submit (pwa/modules/pwa_push/pwa_push.module) 
+##Деталі
+1) Налаштування ключів API - 
+https://YourSiteName.com/admin/config/pwa/push-config
+2) Налаштування сповіщення про створення нових нод - 
+https://YourSiteName.com/admin/config/pwa/subscription-config
+3) Тестування пуш сповіщень - 
+https://YourSiteName.com/admin/config/pwa/broadcast-config
+4) Список підписаних на оновлення людей - 
+https://YourSiteName.com/admin/config/pwa/subscription-list
+5) Надсилання тестових пушів або пушів про створення нод здійснюється 
+під час запуску крона!
+6) Надсилання пушів знаходить у методі sendNotificationStart 
+(pwa/modules/pwa_push/src/Model/SubscriptionsDatastorage.php) 
+7) Формування даних у методі pwa_push_node_form_submit 
+(pwa/modules/pwa_push/pwa_push.module) 
 
 
-===================================================================
-**************Можливі помилки під чам встановлення*****************
-===================================================================
+##Можливі помилки під чам встановлення
 1) minishlink/web-push library має бути версії 4.0, а php => 7.0
 2) minishlink/web-push краще всього встановлювати за допомогою composer
 3) minishlink/web-push часом вимагає php бібліотеку.
-
-
-
-
-
-

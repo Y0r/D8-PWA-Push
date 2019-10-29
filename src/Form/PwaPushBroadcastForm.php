@@ -14,16 +14,21 @@ use Drupal\Core\Queue\QueueFactory;
  * Class AdvancedpwaBroadcastForm.
  */
 class PwaPushBroadcastForm extends FormBase {
-  
+
+  /**
+   * Database connection.
+   *
+   * @var \Drupal\Core\Database\Connection
+   */
   protected $database;
-  
+
   /**
    * QueueFactory.
    *
    * @var \Drupal\Core\Queue\QueueFactory
    */
   protected $queueFactory;
-  
+
   /**
    * {@inheritdoc}
    */
@@ -33,7 +38,7 @@ class PwaPushBroadcastForm extends FormBase {
       $container->get('queue')
     );
   }
-  
+
   /**
    * {@inheritdoc}
    */
@@ -41,60 +46,60 @@ class PwaPushBroadcastForm extends FormBase {
     $this->database = $database;
     $this->queueFactory = $queue;
   }
-  
+
   /**
    * {@inheritdoc}
    */
   public function getFormId() {
     return 'pwa_push_broadcast_form';
   }
-  
+
   /**
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    
+
     $form['help'] = [
       '#markup' => $this->t('Message will be sent to all subscribed users when the cron will be executed next time.'),
     ];
-    
+
     $form['title'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Title of the Message'),
       '#default_value' => '',
       '#required' => TRUE,
     ];
-    
+
     $form['message'] = [
       '#type' => 'textarea',
       '#title' => $this->t('Message to broadcast'),
       '#default_value' => '',
       '#required' => TRUE,
     ];
-    
+
     $form['submit'] = [
       '#type' => 'submit',
       '#value' => $this->t('Send Notification'),
     ];
-    
+
     return $form;
   }
-  
+
   /**
    * {@inheritdoc}
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
   }
-  
+
   /**
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    
+
     $advanced_pwa_config = $this->config('pwa_push.pwa_push');
     $icon = $advanced_pwa_config->get('icon_path');
     $icon_path = file_create_url($icon);
-    
+
     $entry = [
       'title' => $form_state->getValue('title'),
       'message' => $form_state->getValue('message'),
@@ -107,10 +112,10 @@ class PwaPushBroadcastForm extends FormBase {
     ];
     $notification_data = Json::encode($entry);
     $subscriptions = SubscriptionsDatastorage::loadAll();
-    
+
     $pwa_push_public_key = $advanced_pwa_config->get('public_key');
     $pwa_push_private_key = $advanced_pwa_config->get('private_key');
-    
+
     if (empty($pwa_push_public_key) && empty($pwa_push_private_key)) {
       $this->messenger()->addError($this->t('Please set public & private key.'), 'error');
     }
@@ -123,5 +128,5 @@ class PwaPushBroadcastForm extends FormBase {
       $this->messenger()->addMessage($this->t('message is added to queue successfully'));
     }
   }
-  
+
 }
