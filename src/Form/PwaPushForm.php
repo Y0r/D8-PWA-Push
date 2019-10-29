@@ -6,6 +6,7 @@ use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Minishlink\WebPush\VAPID;
 use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\File\FileSystemInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -23,16 +24,16 @@ class PwaPushForm extends ConfigFormBase {
   /**
    * The file name.
    *
-   * @var \Drupal\Core\Extension\ModuleHandlerInterface
+   * @var Drupal\Core\File\FileSystem
    */
   protected $fileSystem;
 
   /**
    * {@inheritdoc}
    */
-  public function __construct(ModuleHandlerInterface $module_handler, FileSystemInterface $fileSystem) {
+  public function __construct(ModuleHandlerInterface $module_handler, FileSystemInterface $file_system) {
     $this->moduleHandler = $module_handler;
-    $this->fileSystem = $fileSystem;
+    $this->fileSystem = $file_system;
   }
 
   /**
