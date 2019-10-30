@@ -14,6 +14,7 @@ self.addEventListener('push', function (event) {
   }
 
   console.log(`[Service Worker][PWA PUSH] Push had this data: "${body}"`);
+
   //FOR TEST FROM GOOGLE DEV OPS
   /*let title = "My test!!";
   let options = {
@@ -35,13 +36,17 @@ self.addEventListener('push', function (event) {
       url: str['url']
     },
     actions: [
-      {action: 'close', title: 'Close'}
+      {
+        action: 'close',
+        title: 'Close'
+      }
     ]
   };
 
   event.waitUntil(
     self.registration.showNotification(str['title'], options)
   );
+
 });
 
 self.addEventListener('notificationclick', function (event) {

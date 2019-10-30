@@ -49,21 +49,34 @@ function pwa_push_node_form_submit($form, FormStateInterface $form_state) {
   $nodeIsPublished = $node->isPublished();
   $enabled_content_types = $config->get('enabled_content_types');
   $node_type = $form_state->getFormObject()->getEntity()->getType();
+
   foreach ($enabled_content_types as $types) {
     if ($types == $node_type) {
       $send_notifications = 1;
     }
   }
+
   if (!empty($nodeIsPublished) && !empty($send_notifications) && !empty($publish_notify)) {
     $pwa_push_config = \Drupal::config('pwa_push.pwa_push');
     $icon = $pwa_push_config->get('icon_path');
     $icon_path = file_create_url($icon);
+
+    // Get url.
+    $ifSendUrl = $config->get('url_to_content');
     $options = ['absolute' => TRUE];
     $url = Url::fromRoute('entity.node.canonical', ['node' => $node->id()], $options);
     $url = $url->toString();
+    $url = $ifSendUrl ? $url : "";
+
+    // Get title and messge.
+    $ifSendNodeData = $config->get('insert_node_data');
+    $nodeData = \Drupal::entityManager()->getStorage('node')->load($node->id());
+    $title = $ifSendNodeData ? $nodeData->get('title')->value : "New '$node_type' content is published. Click to view.";
+    $message = $ifSendNodeData ? $node->get('body')->summary : "";
+    
     $entry = [
-      'title' => "New '$node_type' content is published. Click to view.",
-      'message' => "My Custom message for you, please click!",
+      'title' => $title,
+      'message' => $message,
       'icon' => $icon_path,
       'url' => $url,
       'content-details' => [
@@ -72,6 +85,8 @@ function pwa_push_node_form_submit($form, FormStateInterface $form_state) {
       ],
     ];
     $notification_data = Json::encode($entry);
+
+    // Add item to query.
     $subscriptions = SubscriptionsDatastorage::loadAll();
     $pwa_push_public_key = $pwa_push_config->get('public_key');
     $pwa_push_private_key = $pwa_push_config->get('private_key');

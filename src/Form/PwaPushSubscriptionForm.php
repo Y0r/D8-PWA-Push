@@ -69,8 +69,8 @@ class PwaPushSubscriptionForm extends ConfigFormBase {
     $form['activate_feature'] = [
       '#type' => 'checkbox',
       '#default_value' => $config->get('activate_feature'),
-      '#title' => $this->t('activate published content notifications'),
-      '#description' => $this->t('notifications will be pushed for content of following checked content types is published'),
+      '#title' => $this->t('Activate published content notifications'),
+      '#description' => $this->t('Notifications will be pushed for content of following checked content types is published'),
     ];
     $form['enabled_content_types'] = [
       '#type' => 'checkboxes',
@@ -83,6 +83,27 @@ class PwaPushSubscriptionForm extends ConfigFormBase {
         ],
       ],
     ];
+    
+    $form['messages_settings'] = [
+      '#type' => 'details',
+      '#title' => $this->t('Other messages settings'),
+      '#open' => FALSE,
+    ];
+    
+    $form['messages_settings']['insert_node_data'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Send node title and summary in message'),
+      '#default_value' => NULL !== $config->get('insert_node_data') ? $config->get('insert_node_data') : FALSE,
+      '#description' => $this->t('By message have information about new content creating. Choose this option if you want send title and summary from node.'),
+    ];
+    
+    $form['messages_settings']['url_to_content'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Redirect user to content after click on message'),
+      '#default_value' => NULL !== $config->get('url_to_content') ? $config->get('url_to_content') : false,
+      '#description' => $this->t('User will redirect to created node.'),
+    ];
+    
     return $form;
   }
 
@@ -95,6 +116,8 @@ class PwaPushSubscriptionForm extends ConfigFormBase {
     $this->configFactory->getEditable('pwa_push.pwa_push.subscription')
       ->set('enabled_content_types', $form_state->getValue('enabled_content_types'))
       ->set('activate_feature', $form_state->getValue('activate_feature'))
+      ->set('insert_node_data', $form_state->getValue('insert_node_data'))
+      ->set('url_to_content', $form_state->getValue('url_to_content'))
       ->save();
   }
 
