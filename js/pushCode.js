@@ -21,6 +21,9 @@ self.addEventListener('push', function (event) {
     icon: str['icon'],
     badge: str['icon'],
     vibrate: [100, 50, 100],
+    image: str['image'],
+    //At the time of writing no browser has support for this option.
+    //sound: '/sites/default/files/pwa/sound/goose.mp3',
     data: {
       dateOfArrival: Date.now(),
       primaryKey: '1',

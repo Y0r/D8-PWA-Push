@@ -68,16 +68,37 @@ function pwa_push_node_form_submit($form, FormStateInterface $form_state) {
     $url = $url->toString();
     $url = $ifSendUrl ? $url : "";
 
-    // Get title and messge.
+    // Get title and message.
     $ifSendNodeData = $config->get('insert_node_data');
-    $nodeData = \Drupal::entityManager()->getStorage('node')->load($node->id());
-    $title = $ifSendNodeData ? $nodeData->get('title')->value : "New '$node_type' content is published. Click to view.";
-    $message = $ifSendNodeData ? $node->get('body')->summary : "";
-    
+    if ($ifSendNodeData) {
+      $title = $node->get('title')->value;
+      $message = $node->get('body')->summary;
+    }
+    else {
+      $title = "New '$node_type' content is published. Click to view.";
+      $message = "";
+    }
+
+    // Get image.
+    $image_path = "";
+    $ifSendImage = $config->get('send_image');
+    if ($ifSendImage) {
+      $imageEntity = $node->get('field_image')->entity;
+      if (!empty($imageEntity)) {
+        $uri = $imageEntity->getFileUri();
+        $image_path = Url::fromUri(file_create_url($uri));
+      }
+      else {
+        \Drupal::logger('PWA Push')
+          ->error("Image missing or not saved. Its not will be send.");
+      }
+    }
+
     $entry = [
       'title' => $title,
       'message' => $message,
       'icon' => $icon_path,
+      'image' => $image_path,
       'url' => $url,
       'content-details' => [
         'nodeid' => $node->id(),
