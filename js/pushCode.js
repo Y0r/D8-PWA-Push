@@ -4,7 +4,7 @@
 
 self.addEventListener('push', function (event) {
   'use strict';
-  //console.log('[Service Worker][PWA PUSH] Push Received.');
+  console.debug('[Service Worker][PWA PUSH] Push Received.');
   let body;
   if (event.data) {
     body = event.data.text();
@@ -13,17 +13,8 @@ self.addEventListener('push', function (event) {
     body = 'Push message no payload';
   }
 
-  console.log(`[Service Worker][PWA PUSH] Push had this data: "${body}"`);
+  console.debug(`[Service Worker][PWA PUSH] Push had this data: "${body}"`);
 
-  //FOR TEST FROM GOOGLE DEV OPS
-  /*let title = "My test!!";
-  let options = {
-    body: 'Yay it works.',
-    icon: '../images/icon_144.png',
-    badge: '../images/xmark.png'
-  };*/
-
-  //LIVE
   let str = JSON.parse(body);
   let options = {
     body: str['message'],
@@ -46,12 +37,11 @@ self.addEventListener('push', function (event) {
   event.waitUntil(
     self.registration.showNotification(str['title'], options)
   );
-
 });
 
 self.addEventListener('notificationclick', function (event) {
   'use strict';
-  console.log('[Service Worker][PWA PUSH] Notification click Received.');
+  console.debug('[Service Worker][PWA PUSH] Notification click Received.');
 
   let notification = event.notification;
   let action = event.action;
@@ -68,7 +58,7 @@ self.addEventListener('notificationclick', function (event) {
     notification.close();
   }
   else {
-    console.log('[Service Worker][PWA PUSH] OpenWindow(url)');
+    console.debug('[Service Worker][PWA PUSH] OpenWindow(url)');
     event.waitUntil(
       clients.openWindow(url)
     );
@@ -77,5 +67,5 @@ self.addEventListener('notificationclick', function (event) {
 
 self.addEventListener('notificationclose', function (event) {
   'use strict';
-  console.log('[Service Worker][PWA PUSH] Closed notification: ' + primaryKey);
+  console.debug('[Service Worker][PWA PUSH] Closed notification: ' + primaryKey);
 });
